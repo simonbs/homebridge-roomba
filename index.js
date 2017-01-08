@@ -70,7 +70,7 @@ RoombaAccessory.prototype.pollPhase = function(desiredPhase, callback) {
       return callback(null);
     }
     setTimeout(function() {
-      accessory.pollStatusPhase(desiredPhase, callback);
+      accessory.pollPhase(desiredPhase, callback);
     }, 3000);
   });
 }
