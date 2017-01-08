@@ -1,0 +1,18 @@
+{
+  "name": "homebridge-roomba",
+  "version": "0.0.1",
+  "description": "Roomba plugin for homebridge",
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge",
+    "roomba",
+    "homekit"
+  ],
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "dependencies": {
+    "request": "^2.65.0"
+  }
+}
