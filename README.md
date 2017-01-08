@@ -2,6 +2,8 @@
 
 Roomba plugin for [Homebridge](https://github.com/nfarina/homebridge). Tested with a Roomba 960 but is expected to work with the entire 900 series.
 
+![Screenshots](https://raw.githubusercontent.com/simonbs/homebridge-roomba/master/screenshots.png)
+
 ## Installation
 
 1. Install using `npm install -g git+ssh://git@github.com/simonbs/homebridge-roomba.git `
