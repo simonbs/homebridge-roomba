@@ -19,7 +19,8 @@ RoombaAccessory.prototype.getServices = function() {
   var switchService = new Service.Switch(this.name);
   switchService
     .getCharacteristic(Characteristic.On)
-    .on('set', this.setPowerState.bind(this));
+    .on('set', this.setPowerState.bind(this))
+    .on("get", this.isRunning.bind(this));
   return [ switchService ]
 }
 
@@ -45,19 +46,54 @@ RoombaAccessory.prototype.sendRequest = function(method, value, callback) {
   }, callback);
 }
 
+RoombaAccessory.prototype.getStatus = function(callback) {
+  var accessory = this;
+  this.sendRequest("getStatus", null, function(err, httpResponse, body) {
+    if (err || httpResponse.statusCode != 200) {
+      accessory.log("Could not get status from Roomba: %s", err);
+      return callback(err, null);
+    }
+    var json = JSON.parse(body);
+    var theStatus = json;
+    theStatus["robot_status"] = JSON.parse(json["robot_status"]);
+    callback(null, theStatus);
+  });
+}
+
+RoombaAccessory.prototype.pollPhase = function(desiredPhase, callback) {
+  var accessory = this;
+  this.getStatus(function(err, theStatus) {
+    if (err) {
+      return callback(err);
+    }
+    if (theStatus.robot_status.phase == desiredPhase) {
+      return callback(null);
+    }
+    setTimeout(function() {
+      accessory.pollStatusPhase(desiredPhase, callback);
+    }, 3000);
+  });
+}
+
 RoombaAccessory.prototype.pauseAndDock = function(callback) {
   var accessory = this;
   this.sendRequest("multipleFieldSet", {"remoteCommand": "pause"}, function(err, httpResponse, body) {
     if (err || httpResponse.statusCode != 200) {
       accessory.log("Could not pause Roomba: %s", err);
-      return;
+      return callback(err);
     }
-    accessory.sendRequest("multipleFieldSet", {"remoteCommand": "dock"}, function(err, httpResoinse, body) {
-      if (err || httpResponse.statusCode != 200) {
-        accessory.log("Could not dock Roomba: %s", err);
-        return;
+    accessory.pollPhase("stop", function(err) {
+      if (err) {
+        return callback(err);
       }
-      callback();
+      accessory.sendRequest("multipleFieldSet", {"remoteCommand": "dock"}, function(err, httpResponse, body) {
+        if (err || httpResponse.statusCode != 200) {
+          accessory.log("Could not dock Roomba: %s", err);
+          callback(err);
+          return;
+        }
+        callback();
+      });
     });
   });
 }
@@ -66,9 +102,18 @@ RoombaAccessory.prototype.start = function(callback) {
   this.sendRequest("multipleFieldSet", { "remoteCommand": "start" }, function(err, httpResponse, body) {
     if (err || httpResponse.statusCode != 200) {
       accessory.log("Could not start Roomba: %s", err);
-      return;
+      return callback(err);
     }
     callback();
+  });
+}
+
+RoombaAccessory.prototype.isRunning = function(callback) {
+  this.getStatus(function(err, theStatus) {
+    if (err) {
+      return callback(err);
+    }
+    return callback(null, theStatus.robot_status.phase == "run")
   });
 }
 
