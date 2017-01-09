@@ -7,7 +7,7 @@ Roomba plugin for [Homebridge](https://github.com/nfarina/homebridge). Tested wi
 ## Installation
 
 1. Install using `npm install -g git+ssh://git@github.com/simonbs/homebridge-roomba.git `
-2. Add your Roomba to `~/.homebridge/config.json`. As shown below. Continue reading for information on fiding the blid, robotpwd and asset ID.
+2. Add your Roomba to `~/.homebridge/config.json` as shown below. Continue reading for information on fiding the blid, robotpwd and asset ID.
 
     ```
     "accessories": [{
@@ -29,4 +29,4 @@ I recommend using [Charles](https://www.charlesproxy.com) for this. The followin
 
 1. Open up Charles and configure the proxy on your iOS device in the WiFi settings.
 2. Open the Roomba iOS app and make sure you have recorded some calls to `https://irobot.axeda.com` in Charles. In particular, you should have recorded requests to `https://irobot.axeda.com/services/v1/rest/Scripto/execute/AspenApiRequest`.
-3. Find one of the requests and browse contents of the requests, e.g. in the raw format. The body of the request will contain your blid and robotpwd. There will be a header named `ASSET-ID` containing your asset ID.
+3. Find one of the requests and browse the contents of the request, e.g. in the raw format. The body of the request will contain your blid and robotpwd. There will be a header named `ASSET-ID` containing your asset ID.
