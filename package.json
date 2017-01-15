@@ -13,6 +13,7 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "request": "^2.65.0"
+    "request": "^2.65.0",
+    "roomba": "git+ssh://git@github.com/simonbs/roomba.git"
   }
 }
